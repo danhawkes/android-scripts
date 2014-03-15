@@ -5,7 +5,14 @@ Utility scripts for Android development.
 
 ## andimg
 
-Resize an image for multiple Android densities.
+<p align="center" >
+  <img src="assets/andimg.png" alt="andimg">
+</p>
+
+Resize an image for multiple screen densities.   
+
+* Resized images are placed in `drawable-*dpi` directories.
+* Generates `XXHDPI`, `XHDPI`, `HDPI` and `MDPI` variants.
 
 ### Dependencies
 
@@ -15,17 +22,17 @@ imagemagick, python 2.7+
 ```
 andimg [-h] [-o OUT] [-e EXT] file x y
 
-Resize an image for multiple Android densities.
-
-positional arguments:
   file                  Source file to be resized.
   x                     Target X resolution for mdpi (1x) image.
   y                     Target Y resolution for mdpi (1x) image.
-
-optional arguments:
-  -h, --help            show this help message and exit
   -o OUT, --output-dir OUT
                         Output directory.
   -e EXT, --extension EXT
                         Output file extension. Defaults to PNG.
 ```
+
+### Examples
+
+From the root of a project, resize an image from `artwork`, and put it in the `src/main/res` directory:
+
+`andimg -o src/main/res artwork/icon.png 32 32` 
