@@ -1,0 +1,49 @@
+#!/usr/bin/python
+
+import argparse
+import os
+import errno
+from subprocess import call
+
+
+def mkdir(path):
+    try:
+        os.makedirs(path)
+    except OSError as exception:
+        if exception.errno != errno.EEXIST:
+            raise
+
+
+parser = argparse.ArgumentParser(
+    description='Resize an image for multiple Android densities.')
+parser.add_argument('file', type=file, help='Source file to be resized.')
+parser.add_argument(
+    'x', type=int, help='Target X resolution for mdpi (1x) image.')
+parser.add_argument(
+    'y', type=int, help='Target Y resolution for mdpi (1x) image.')
+parser.add_argument(
+    '-o', '--output-dir', dest='out', help='Output directory.', default='.')
+parser.add_argument(
+    '-e', '--extension', dest='ext', help='Output file extension. Defaults to PNG.', default='png')
+
+args = parser.parse_args()
+
+densities = {'mdpi': 1.0, 'hdpi': 1.5, 'xhdpi': 2.0, 'xxhdpi': 3.0}
+
+print args.file.name, '~>'
+
+for density, scalar in densities.items():
+    # scaled output dimensions
+    xr, yr = int(round(args.x * scalar)), int(round(args.y * scalar))
+
+    # output path with modified extension
+    path = os.path.join(
+        args.out, 'drawable-{}/{}'.format(density, os.path.basename(args.file.name)))
+    path = os.path.splitext(path)[0] + '.' + args.ext
+
+    # create directory and resize
+    mkdir(os.path.dirname(path))
+    cmd = 'convert {} -resize {}x{}\! {}'.format(args.file.name, xr, yr, path)
+    call(cmd, shell=True)
+
+    print path
