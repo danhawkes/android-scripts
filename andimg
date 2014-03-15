@@ -43,7 +43,7 @@ for density, scalar in densities.items():
 
     # create directory and resize
     mkdir(os.path.dirname(path))
-    cmd = 'convert {} -resize {}x{}\! {}'.format(args.file.name, xr, yr, path)
+    cmd = 'convert {} -background transparent -layers merge -resize {}x{}\! {}'.format(args.file.name, xr, yr, path)
     call(cmd, shell=True)
 
     print path
