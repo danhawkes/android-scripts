@@ -1,0 +1,65 @@
+#!/usr/bin/python
+
+import argparse
+import os
+import errno
+import sys
+import fileinput
+from subprocess import call
+
+unknown = 'Unknown'
+
+parser = argparse.ArgumentParser(
+    description='Quickly generate a key store suitable for signing an \
+    Android application.\n\n\nThe cipher, key size and validity are set to \
+    recommended values. Various X509 attributes are set to \'Unknown\' unless \
+    otherwise specified.')
+parser.add_argument(
+    'alias',
+    help='Alias for the key')
+parser.add_argument(
+    '-o', '--output',
+    dest='out',
+    help='Output file',
+    default='release.keystore')
+parser.add_argument(
+    '-cn', '--common-name',
+    dest='cn',
+    help='X509 Common name',
+    default=unknown)
+parser.add_argument(
+    '-ou', '--org-unit',
+    dest='ou',
+    help='X509 Organization unit',
+    default=unknown)
+parser.add_argument(
+    '-on', '--org-name',
+    dest='on',
+    help='X509 Organization name',
+    default=unknown)
+parser.add_argument(
+    '-ln', '--locality-name',
+    dest='ln',
+    help='X509 Locality name',
+    default=unknown)
+parser.add_argument(
+    '-l', '--state-name',
+    dest='sn',
+    help='X509 State/Province name',
+    default=unknown)
+parser.add_argument(
+    '-cc', '--country',
+    dest='cc',
+    help='X509 Country code',
+    default=unknown)
+args = parser.parse_args()
+
+pwd = raw_input('Keystore and alias password: ')
+
+cmd = 'keytool -genkey -keystore {0} -alias {1} -keyalg RSA -keysize 2048 \
+    -validity 10000 -storepass {2} -keypass {2} -dname "CN={3}, OU={4}, O={5},\
+     L={6}, S={7}, C={8}"'.format(args.out, args.alias, pwd, args.cn, args.ou,
+                                  args.on, args.ln, args.sn, args.cc)
+exit_code = call(cmd, shell=True)
+if (exit_code == 0):
+    print('Done.')
